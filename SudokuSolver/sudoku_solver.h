@@ -14,7 +14,9 @@ public:
 private:
 	void Input(void);
 	void Logic(void);
+
 	void Draw(void);
+	void DrawBoundaries();
 };
 
 #endif
