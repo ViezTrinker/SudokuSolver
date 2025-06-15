@@ -17,6 +17,7 @@ private:
 
 	void Draw(void);
 	void DrawBoundaries();
+	void DrawStrings();
 };
 
 #endif

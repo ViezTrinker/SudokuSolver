@@ -30,6 +30,7 @@ void SudokuSolver::Draw(void)
 	Clear(olc::WHITE);
 	
 	DrawBoundaries();
+	DrawStrings();
 }
 
 void SudokuSolver::DrawBoundaries(void)
@@ -55,4 +56,14 @@ void SudokuSolver::DrawBoundaries(void)
 			DrawLine(BoardWidth - index * SudokuUnitWidth, TopLayerHeight, BoardWidth - index * SudokuUnitWidth, ScreenHeight(), olc::GREY);
 		}
 	}
+}
+
+void SudokuSolver::DrawStrings(void)
+{
+	std::string topLayerString = "Sudoku Solver";
+	constexpr uint32_t TextScale = 2;
+	int32_t posX = TopLayerWidth / 2 - GetTextSize(topLayerString).x / 2 * TextScale;
+	int32_t posY = TopLayerHeight / 2 - GetTextSize(topLayerString).y / 2 * TextScale;
+
+	DrawString(posX, posY, topLayerString, olc::BLACK, TextScale);
 }
