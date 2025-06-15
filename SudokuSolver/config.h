@@ -27,4 +27,14 @@ inline constexpr int32_t SudokuUnitHeight = BoardHeight / SudokuUnits;
 static_assert(BoardWidth == BoardHeight);
 static_assert(BoardWidth % SudokuUnits == 0);
 
+inline constexpr int32_t StartStringX = 440;
+inline constexpr int32_t StartStringY = 85;
+inline constexpr int32_t StartStringWidth = 95;
+inline constexpr int32_t StartStringHeight = 35;
+
+inline constexpr int32_t ResetStringX = 440;
+inline constexpr int32_t ResetStringY = 130;
+inline constexpr int32_t ResetStringWidth = 95;
+inline constexpr int32_t ResetStringHeight = 35;
+
 #endif
