@@ -16,7 +16,7 @@ void SudokuSolver::ResetBoard(void)
 		for (uint8_t indexY = 0; indexY < SudokuUnits; indexY++)
 		{
 			_board[indexX][indexY].value = 0;
-			_board[indexX][indexY].value = false;
+			_board[indexX][indexY].isFixed = false;
 		}
 	}
 	_mouseX = 0;
@@ -25,7 +25,7 @@ void SudokuSolver::ResetBoard(void)
 	_activeCellX = 0;
 	_activeCellY = 0;
 
-	bool _inputValid = true;
+	_inputValid = true;
 
 	while (!_stack.empty())
 	{
@@ -145,9 +145,9 @@ void SudokuSolver::Logic(void)
 		_iterations++;
 
 		bool isValid = true;
-		for (uint8_t indexX = 0; indexX < 9; indexX++)
+		for (uint8_t indexX = 0; indexX < SudokuUnits; indexX++)
 		{
-			for (uint8_t indexY = 0; indexY < 9; indexY++)
+			for (uint8_t indexY = 0; indexY < SudokuUnits; indexY++)
 			{
 				if (!IsValid(indexX, indexY, _board[indexX][indexY].value) || _board[indexX][indexY].value == 0)
 				{
@@ -327,9 +327,9 @@ void SudokuSolver::DrawStrings(void)
 
 	std::string mouseXString = "X: ";
 	std::string mouseYString = "Y: ";
-	DrawString(posX, ScreenHeight() - SudokuUnitHeight,
+	DrawString(posX - 10, ScreenHeight() - SudokuUnitHeight,
 		mouseXString.append(std::to_string(_mouseX)), olc::BLACK);
-	DrawString(posX, ScreenHeight() - SudokuUnitHeight / 2,
+	DrawString(posX - 10, ScreenHeight() - SudokuUnitHeight / 2,
 		mouseYString.append(std::to_string(_mouseY)), olc::BLACK);
 
 }
