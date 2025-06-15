@@ -55,15 +55,17 @@ private:
 	};
 	Cell _board[SudokuUnits][SudokuUnits] = {};
 
-	int32_t _mouseX;
-	int32_t _mouseY;
+	int32_t _mouseX = 0;
+	int32_t _mouseY = 0;
 
-	uint8_t _activeCellX;
-	uint8_t _activeCellY;
+	uint8_t _activeCellX = 0;
+	uint8_t _activeCellY = 0;
 
 	bool _inputValid = true;
 
-	std::stack<Step> _stack;
+	std::stack<Step> _stack{};
+
+	uint64_t _iterations = 0;
 };
 
 #endif

@@ -21,6 +21,20 @@ void SudokuSolver::ResetBoard(void)
 			_board[indexX][indexY].value = false;
 		}
 	}
+	_mouseX = 0;
+	_mouseY = 0;
+
+	_activeCellX = 0;
+	_activeCellY = 0;
+
+	bool _inputValid = true;
+
+	while (!_stack.empty())
+	{
+		_stack.pop();
+	}
+
+	_iterations = 0;
 }
 
 bool SudokuSolver::OnUserUpdate(float fElapsedTime)
@@ -96,12 +110,27 @@ void SudokuSolver::Input(void)
 			{
 				_state = State::Pause;
 			}
+			if (mousePressed && _mouseX > ResetStringX && _mouseX < ResetStringX + ResetStringWidth &&
+				_mouseY > ResetStringY && _mouseY < ResetStringY + ResetStringHeight)
+			{
+				ResetBoard();
+				_state = State::Idle;
+			}
 			break;
 		case State::Pause:
 			if (mousePressed && _mouseX > StartStringX && _mouseX < StartStringX + StartStringWidth &&
 				_mouseY > StartStringY && _mouseY < StartStringY + StartStringHeight)
 			{
 				_state = State::Running;
+			}
+			break;
+		case State::Finished:
+			if (mousePressed && _mouseX > ResetStringX && _mouseX < ResetStringX + ResetStringWidth &&
+				_mouseY > ResetStringY && _mouseY < ResetStringY + ResetStringHeight)
+			{
+				ResetBoard();
+				_state = State::Idle;
+				break;
 			}
 			break;
 		default:
@@ -115,10 +144,24 @@ void SudokuSolver::Logic(void)
 	if (_state == State::Running)
 	{
 		bool solve = Solve();
-		if (!solve)
+		_iterations++;
+
+		bool isValid = true;
+		for (uint8_t indexX = 0; indexX < 9; indexX++)
+		{
+			for (uint8_t indexY = 0; indexY < 9; indexY++)
+			{
+				if (!IsValid(indexX, indexY, _board[indexX][indexY].value) || _board[indexX][indexY].value == 0)
+				{
+					isValid = false;
+				}
+			}
+		}
+		if (isValid)
 		{
 			_state = State::Finished;
 		}
+
 	}
 }
 
@@ -278,15 +321,18 @@ void SudokuSolver::DrawStrings(void)
 	DrawString(posX, posY, startString, olc::BLACK, TextScale);
 	DrawRect(StartStringX, StartStringY, StartStringWidth, StartStringHeight, olc::BLACK);
 
-	std::string resetString = "Reset";
+	std::string resetString = _state == State::Running ? "Stop" : "Reset";
 	posX = BoardWidth + SudokuUnitWidth;
 	posY = TopLayerHeight + SudokuUnitHeight * 2.25;
 	DrawString(posX, posY, resetString, olc::BLACK, TextScale);
 	DrawRect(ResetStringX, ResetStringY, ResetStringWidth, ResetStringHeight, olc::BLACK);
 
-	//TODO REMOVE LATER
-	DrawString(BoardWidth + SudokuUnitWidth, ScreenHeight() - SudokuUnitHeight, std::to_string(_mouseX), olc::BLACK);
-	DrawString(BoardWidth + SudokuUnitWidth, ScreenHeight() - SudokuUnitHeight / 2, std::to_string(_mouseY), olc::BLACK);
+	std::string mouseXString = "X: ";
+	std::string mouseYString = "Y: ";
+	DrawString(posX, ScreenHeight() - SudokuUnitHeight,
+		mouseXString.append(std::to_string(_mouseX)), olc::BLACK);
+	DrawString(posX, ScreenHeight() - SudokuUnitHeight / 2,
+		mouseYString.append(std::to_string(_mouseY)), olc::BLACK);
 
 }
 
@@ -305,8 +351,16 @@ void SudokuSolver::DrawBoard(void)
 			{
 				continue;
 			}
-			DrawString(indexX * SudokuUnitWidth + 12, indexY * SudokuUnitHeight + TopLayerHeight + 12,
-						std::to_string(_board[indexX][indexY].value), olc::BLACK, 3);
+			if (_board[indexX][indexY].isFixed)
+			{
+				DrawString(indexX * SudokuUnitWidth + 12, indexY * SudokuUnitHeight + TopLayerHeight + 12,
+					std::to_string(_board[indexX][indexY].value), olc::RED, 3);
+			}
+			else
+			{
+				DrawString(indexX * SudokuUnitWidth + 12, indexY * SudokuUnitHeight + TopLayerHeight + 12,
+					std::to_string(_board[indexX][indexY].value), olc::BLACK, 3);
+			}
 		}
 	}
 }
@@ -341,4 +395,12 @@ void SudokuSolver::DrawHelpText(void)
 	default:
 		break;
 	}
+
+	if (_state == State::Running || _state == State::Pause || _state == State::Finished)
+	{
+		std::string iterationString = "Iterations: ";
+		iterationString.append(std::to_string(_iterations));
+		DrawString(posX, posY + 100, iterationString, olc::BLACK);
+	}
+
 }
