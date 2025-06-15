@@ -55,16 +55,16 @@ void SudokuSolver::Input(void)
 	{
 		mousePressed = true;
 	}
-	if (GetKey(olc::Key::NP0).bHeld) { numberTyped = true; number = 0; }
-	else if (GetKey(olc::Key::NP1).bHeld) { numberTyped = true; number = 1; }
-	else if (GetKey(olc::Key::NP2).bHeld) { numberTyped = true; number = 2; }
-	else if (GetKey(olc::Key::NP3).bHeld) { numberTyped = true; number = 3; }
-	else if (GetKey(olc::Key::NP4).bHeld) { numberTyped = true; number = 4; }
-	else if (GetKey(olc::Key::NP5).bHeld) { numberTyped = true; number = 5; }
-	else if (GetKey(olc::Key::NP6).bHeld) { numberTyped = true; number = 6; }
-	else if (GetKey(olc::Key::NP7).bHeld) { numberTyped = true; number = 7; }
-	else if (GetKey(olc::Key::NP8).bHeld) { numberTyped = true; number = 8; }
-	else if (GetKey(olc::Key::NP9).bHeld) { numberTyped = true; number = 9; }
+	if (GetKey(olc::Key::NP0).bHeld || GetKey(olc::Key::K0).bHeld) { numberTyped = true; number = 0; }
+	else if (GetKey(olc::Key::NP1).bHeld || GetKey(olc::Key::K1).bHeld) { numberTyped = true; number = 1; }
+	else if (GetKey(olc::Key::NP2).bHeld || GetKey(olc::Key::K2).bHeld) { numberTyped = true; number = 2; }
+	else if (GetKey(olc::Key::NP3).bHeld || GetKey(olc::Key::K3).bHeld) { numberTyped = true; number = 3; }
+	else if (GetKey(olc::Key::NP4).bHeld || GetKey(olc::Key::K4).bHeld) { numberTyped = true; number = 4; }
+	else if (GetKey(olc::Key::NP5).bHeld || GetKey(olc::Key::K5).bHeld) { numberTyped = true; number = 5; }
+	else if (GetKey(olc::Key::NP6).bHeld || GetKey(olc::Key::K6).bHeld) { numberTyped = true; number = 6; }
+	else if (GetKey(olc::Key::NP7).bHeld || GetKey(olc::Key::K7).bHeld) { numberTyped = true; number = 7; }
+	else if (GetKey(olc::Key::NP8).bHeld || GetKey(olc::Key::K8).bHeld) { numberTyped = true; number = 8; }
+	else if (GetKey(olc::Key::NP9).bHeld || GetKey(olc::Key::K9).bHeld) { numberTyped = true; number = 9; }
 
 	switch (_state)
 	{
@@ -91,13 +91,20 @@ void SudokuSolver::Input(void)
 		case State::WaitingForInput:
 			if (numberTyped)
 			{
-				if (!IsValid(_activeCellX, _activeCellY, number))
+				if (!IsValid(_activeCellX, _activeCellY, number) && number != 0)
 				{
 					_inputValid = false;
 					break;
 				}
 				_board[_activeCellX][_activeCellY].value = number;
-				_board[_activeCellX][_activeCellY].isFixed = true;
+				if (number != 0)
+				{
+					_board[_activeCellX][_activeCellY].isFixed = true;
+				}
+				else
+				{
+					_board[_activeCellX][_activeCellY].isFixed = false;
+				}
 				_inputValid = true;
 				_state = State::Idle;
 			}
@@ -251,12 +258,12 @@ bool SudokuSolver::IsValid(uint8_t x, uint8_t y, uint8_t number)
 		}
 	}
 
-	uint8_t blockStartX = (x / 3) * 3;
-	uint8_t blockStartY = (y / 3) * 3;
+	uint8_t blockStartX = (x / BlockUnits) * BlockUnits;
+	uint8_t blockStartY = (y / BlockUnits) * BlockUnits;
 
-	for (uint8_t dx = 0; dx < 3; ++dx)
+	for (uint8_t dx = 0; dx < BlockUnits; ++dx)
 	{
-		for (uint8_t dy = 0; dy < 3; ++dy)
+		for (uint8_t dy = 0; dy < BlockUnits; ++dy)
 		{
 			uint8_t cx = blockStartX + dx;
 			uint8_t cy = blockStartY + dy;
@@ -285,7 +292,7 @@ void SudokuSolver::DrawBoundaries(void)
 	DrawLine(0, TopLayerHeight, ScreenWidth(), TopLayerHeight, olc::BLACK);
 	for (uint8_t index = 0; index < SudokuUnits; index++)
 	{
-		if (index % 3 == 0)
+		if (index % BlockUnits == 0)
 		{
 			DrawLine(0, TopLayerHeight + index * SudokuUnitHeight, BoardWidth, TopLayerHeight + index * SudokuUnitHeight, olc::BLACK);
 		}
@@ -294,7 +301,7 @@ void SudokuSolver::DrawBoundaries(void)
 			DrawLine(0, TopLayerHeight + index * SudokuUnitHeight, BoardWidth, TopLayerHeight + index * SudokuUnitHeight, olc::GREY);
 		}
 
-		if (index % 3 == 0)
+		if (index % BlockUnits == 0)
 		{
 			DrawLine(BoardWidth - index * SudokuUnitWidth, TopLayerHeight, BoardWidth - index * SudokuUnitWidth, ScreenHeight(), olc::BLACK);
 		}
