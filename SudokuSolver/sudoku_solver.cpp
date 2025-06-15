@@ -1,7 +1,5 @@
 #include "sudoku_solver.h"
 
-#include "windows.h"
-
 #include "config.h"
 
 SudokuSolver::SudokuSolver(void)
@@ -317,13 +315,13 @@ void SudokuSolver::DrawStrings(void)
 
 	std::string startString = _state != State::Running ? "Start" : "Pause";
 	posX = BoardWidth + SudokuUnitWidth;
-	posY = TopLayerHeight + SudokuUnitHeight * 1.25;
+	posY = static_cast<int32_t>(TopLayerHeight + SudokuUnitHeight * 1.25);
 	DrawString(posX, posY, startString, olc::BLACK, TextScale);
 	DrawRect(StartStringX, StartStringY, StartStringWidth, StartStringHeight, olc::BLACK);
 
 	std::string resetString = _state == State::Running ? "Stop" : "Reset";
 	posX = BoardWidth + SudokuUnitWidth;
-	posY = TopLayerHeight + SudokuUnitHeight * 2.25;
+	posY = static_cast<int32_t>(TopLayerHeight + SudokuUnitHeight * 2.25);
 	DrawString(posX, posY, resetString, olc::BLACK, TextScale);
 	DrawRect(ResetStringX, ResetStringY, ResetStringWidth, ResetStringHeight, olc::BLACK);
 
